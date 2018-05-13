@@ -1,25 +1,35 @@
 import numpy as np
 import scipy.linalg as lin
-N = 100
-k = 1
+import time
+
+N=10
+A = np.random.random((N,N))
+k = np.arange(N)
+b = np.zeros(N)
 t_st = 0.
 t_fin = 10.
-del_t = 0.1
-A=np.random.random((N,N))
-i,j = np.indices(A.shape)
-t = np.linspace(t_st, t_fin, num = int(t_fin/del_t))
-B = k/(1+k*t)
-x_sol = lin.solve(A,B)
+t_del = 0.1
+
+
+start_time = time.clock()
+for t in np.linspace(t_st,t_fin,num = int(t_fin/t_del)):
+    b = k/(1.+ k * t) 
+    x_sol = lin.solve(A,b)
+    print("t=",t, "x_sol=",x_sol)
+print("--- %s seconds - time for solve method" % (time.clock() - start_time))
+
 A_LU = lin.lu_factor(A)
-x_LU = lin.lu_solve(A_LU,B,0)
+start_time = time.clock()
+for t in np.linspace(t_st,t_fin,num = int(t_fin/t_del)):
+    b = k/(1.+ k * t) 
+    x_LU = lin.lu_solve(A_LU, b)
+    print("t=",t, "x_LU=", x_LU)
+print("--- %s seconds - time for LU method" % (time.clock() - start_time))
+
 A_inv = lin.inv(A)
-x_inv = np.dot(A_inv,B)
-print ("x_sol = ",lin.solve(A,B))
-print ("x_LU = ",lin.lu_solve(A_LU,B,0))
-print ("x_inv = ",np.dot(A_inv,B))
-print('solve_time = ')
-(get_ipython().run_line_magic('timeit', 'lin.solve(A,B)'))
-print("lu_solve_time")
-get_ipython().run_line_magic('timeit', 'lin.lu_solve(A_LU,B,0)')
-print("dot_solve_time")
-get_ipython().run_line_magic('timeit', 'np.dot(A_inv,B)')
+start_time = time.clock()
+for t in np.linspace(t_st,t_fin,num = int(t_fin/t_del)):
+    b = k/(1.+ k * t) 
+    x_inv = np.dot(A_inv,b) 
+    print("t=",t, "x_inv=", x_inv)
+print("--- %s seconds - time for inv method" % (time.clock() - start_time))
